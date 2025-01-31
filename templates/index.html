@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Boletos</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Boletos Distribuidos </h1>
+        <h2>Ex: para Marcio</h2>
+        <form action="/criar" method="post">
+            <input type="number" step="0.01" name="valor" placeholder="Valor do Boleto" required>
+            <button type="submit" class="button">Criar Boleto</button>
+        </form>
+
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Valor</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+            {% for boleto in boletos %}
+            <tr>
+                <td>{{ boleto.id }}</td>
+                <td>{{ boleto.valor_total }}</td>
+                <td>{{ boleto.status }}</td>
+                <td>
+                    {% if boleto.status == "Pendente" %}
+                    <form action="/parcelar" method="post" style="display:inline;">
+                        <input type="hidden" name="boleto_id" value="{{ boleto.id }}">
+                        <input type="number" name="parcelas" placeholder="Parcelas" required>
+                        <input type="number" step="0.1" name="juros" placeholder="Juros (%)" required>
+                        <button type="submit" class="button">Parcelar</button>
+                    </form>
+                    <a href="/quitar/{{ boleto.id }}" class="button">Quitar</a>
+                    {% else %}
+                    <span>Pago</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+</html>
